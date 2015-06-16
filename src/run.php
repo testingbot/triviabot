@@ -77,6 +77,9 @@ if (($game->last_asked + $game->delay) <= $timestamp && $game->started == 1)
 
             $question->current_hint = -1; // this gets incremented by 1 (to 0 - off) after these conditionals
             $game->questions_without_reply++;
+
+            $game->round = $game->round + 1;
+
             if ($game->questions_without_reply == 10)
             {
                 $game->stopping = 1;
@@ -97,11 +100,18 @@ if (($game->last_asked + $game->delay) <= $timestamp && $game->started == 1)
         $game->save();
 
         $question->current_hint++;
+
         $question->save();
 
         //send the question and hint/answer to channel
 
-        $message = "{$questiontext}\n{$hint}";
+        $prefix = '';
+        if ((int) $game->amount > 0)
+        {
+          $prefix = "(" . $game->round . "/" . $game->amount . ") ";
+        }
+
+        $message = $prefix . "{$questiontext}\n{$hint}";
         echo "Messsage: $message";
         $url = SLACK_INCOMING_WEBHOOK_URL;
         $data = ['payload'=>$bot->sendMessageToChannel($message)];

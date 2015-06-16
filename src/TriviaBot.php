@@ -32,7 +32,7 @@ class TriviaBot
     /**
      *
      */
-    public function start()
+    public function start($amount = null)
     {
         $game = \Game::first();
         if (empty($game))
@@ -53,6 +53,10 @@ class TriviaBot
         $question->current_hint = 1;
         $question->save();
 
+        if (!is_null($amount))
+        {
+            $game->amount = $amount;
+        }
         $game->started = 1;
         $game->save();
     }

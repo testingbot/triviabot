@@ -63,7 +63,8 @@ if (!empty($_POST) && (!empty($_POST['token']) && $_POST['token'] == SLACK_OUTGO
                 if (!$bot->started())
                 {
                     $bot->setIconEmoji(":sunglasses:");
-                    $bot->start();
+                    $amount = isset($command[2]) ? (int) $command[2] : null;
+                    $bot->start($amount);
                     die($bot->sendMessageToChannel("Thanks {$player_name}, I was getting bored! More trivia coming up!"));
                 }
                 else
@@ -219,6 +220,9 @@ if (!empty($_POST) && (!empty($_POST['token']) && $_POST['token'] == SLACK_OUTGO
     {
         if ($bot->started())
         {
+            $player_text = str_replace(array('!answer', '!a'), '', $player_text);
+            file_put_contents('/tmp/log.txt', "answer:" . $player_text, FILE_APPEND);
+            
             //check if the answer is correct
             $question = $bot->getCurrentQuestion();
             if ($question->current_hint == 1) //the question's not been asked yet!
@@ -273,6 +277,7 @@ if (!empty($_POST) && (!empty($_POST['token']) && $_POST['token'] == SLACK_OUTGO
                 $message = "YES! *{$player_name}* that's {$player->current_run} in a row. You scored {$score} points bringing your total for the month to {$totalscore}!\n";
                 $message .= "The answer was *{$player_text}*!\n";
                 $game->questions_without_reply = 0;
+                $game->round = $game->round + 1;
                 if (($game->stopping == 1))
                 {
                     $question->current_hint = 0;
@@ -280,6 +285,12 @@ if (!empty($_POST) && (!empty($_POST['token']) && $_POST['token'] == SLACK_OUTGO
                     $game->started = 0;
                     $game->stopping = 0;
                     $message .= "*GAME STOPPED*";
+                } else if ($game->round >= $game->amount) {
+                    $question->current_hint = 0;
+                    $question->save();
+                    $game->started = 0;
+                    $game->stopping = 0;
+                    $message .= "*GAME STOPPED AFTER " . $game->round . " questions *";
                 } else
                 {
                     $message .= "Next question coming up...";

@@ -277,7 +277,6 @@ if (!empty($_POST) && (!empty($_POST['token']) && $_POST['token'] == SLACK_OUTGO
                 $message = "YES! *{$player_name}* that's {$player->current_run} in a row. You scored {$score} points bringing your total for the month to {$totalscore}!\n";
                 $message .= "The answer was *{$player_text}*!\n";
                 $game->questions_without_reply = 0;
-                $game->round = $game->round + 1;
                 if (($game->stopping == 1))
                 {
                     $question->current_hint = 0;
@@ -290,12 +289,14 @@ if (!empty($_POST) && (!empty($_POST['token']) && $_POST['token'] == SLACK_OUTGO
                     $question->save();
                     $game->started = 0;
                     $game->stopping = 0;
-                    $message .= "*GAME STOPPED AFTER " . $game->round . " questions *";
+                    $message .= "*GAME STOPPED AFTER " . $game->amount . " questions *";
                 } else
                 {
                     $message .= "Next question coming up...";
                     $bot->start();
                 }
+
+                $game->round = $game->round + 1;
                 $game->save();
                 $bot->setIconEmoji(":clap:");
                 die($bot->sendMessageToChannel($message));

@@ -55,6 +55,7 @@ class TriviaBot
 
         if (!is_null($amount))
         {
+            $game->round = 1;
             $game->amount = $amount;
         }
         $game->started = 1;

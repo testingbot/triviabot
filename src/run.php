@@ -84,9 +84,7 @@ if (($game->last_asked + $game->delay) <= $timestamp && $game->started == 1)
             $question->current_hint = -1; // this gets incremented by 1 (to 0 - off) after these conditionals
             $game->questions_without_reply++;
 
-            $game->round = $game->round + 1;
-
-            if ($game->questions_without_reply == 10)
+            if ($game->questions_without_reply == 3)
             {
                 $game->stopping = 1;
                 $hint .= "\nNobody appears to be playing!";
@@ -101,6 +99,14 @@ if (($game->last_asked + $game->delay) <= $timestamp && $game->started == 1)
                 $hint .= "\nNext question coming up...";
                 //set up the next question
                 $bot->start(); //this sets a random question's current_hint to 1
+            }
+
+            if (!empty($game->amount) && ($game->round >= $game->amount)) {
+                $question->current_hint = 0;
+                $question->save();
+                $game->started = 0;
+                $game->stopping = 0;
+                $hint .= "*GAME STOPPED AFTER " . $game->round . " questions *";
             }
         }
         $game->save();
@@ -122,6 +128,11 @@ if (($game->last_asked + $game->delay) <= $timestamp && $game->started == 1)
         $url = SLACK_INCOMING_WEBHOOK_URL;
         $data = ['payload'=>$bot->sendMessageToChannel($message)];
 
+        if ($questiontext == '')
+        {
+            $game->round = $game->round + 1;
+            $game->save();
+        }
         // use key 'http' even if you send the request to https://...
         $options = array(
             'http' => array(

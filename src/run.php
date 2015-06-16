@@ -31,30 +31,36 @@ if (($game->last_asked + $game->delay) <= $timestamp && $game->started == 1)
         //show first letter of each word
         if ($question->current_hint == 1)
         {
-            foreach ($letters as $letter)
+            if (strlen($answer) > 1)
             {
-                if ($letter == " " || stripos("abcdefghijklmnopqrstuvwxyz1234567890", $letter) === false)
+                foreach ($letters as $letter)
                 {
-                    $hint .= $letter;
-                } else
-                {
-                    $hint .= "―";
+                    if ($letter == " " || stripos("abcdefghijklmnopqrstuvwxyz1234567890", $letter) === false)
+                    {
+                        $hint .= $letter;
+                    } else
+                    {
+                        $hint .= "―";
+                    }
+                    $previousLetter = $letter;
                 }
-                $previousLetter = $letter;
             }
         } //show first 3 letters of first word
         elseif ($question->current_hint == 2)
         {
-            foreach ($letters as $key => $letter)
+            if (strlen($answer) > 3)
             {
-                if ($previousLetter == " " || $letter == " " || stripos("abcdefghijklmnopqrstuvwxyz1234567890", $letter) === false || $key <= 2)
+                foreach ($letters as $key => $letter)
                 {
-                    $hint .= $letter;
-                } else
-                {
-                    $hint .= "―";
+                    if ($previousLetter == " " || $letter == " " || stripos("abcdefghijklmnopqrstuvwxyz1234567890", $letter) === false || $key <= 2)
+                    {
+                        $hint .= $letter;
+                    } else
+                    {
+                        $hint .= "―";
+                    }
+                    $previousLetter = $letter;
                 }
-                $previousLetter = $letter;
             }
         } //show all vowels
         elseif ($question->current_hint == 3)

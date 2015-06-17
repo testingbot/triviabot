@@ -149,8 +149,8 @@ if (!empty($_POST) && (!empty($_POST['token']) && $_POST['token'] == SLACK_OUTGO
                 }
                 break;
             case "scores":
-                $message = "The top 3 high scores are:\n";
-                $scorers = \Player::find('all',array("order"=>"high_score DESC", "limit"=>3));
+                $message = "The high scores are:\n";
+                $scorers = \Player::find('all',array("order"=>"high_score DESC", "limit"=>15));
 
                 if (!empty($scorers))
                 {
@@ -164,8 +164,8 @@ if (!empty($_POST) && (!empty($_POST['token']) && $_POST['token'] == SLACK_OUTGO
                 break;
             case "rows": //the only reason this is here is because I always forget it's runs and type rows in channel!
             case "runs":
-                $message = "The top 3 best runs (questions answered in a row before another player) are:\n";
-                $scorers = \Player::find('all',array("order"=>"best_run DESC", "limit"=>3));
+                $message = "The top runs (questions answered in a row before another player) are:\n";
+                $scorers = \Player::find('all',array("order"=>"best_run DESC", "limit"=>10));
                 if (!empty($scorers))
                 {
                     foreach ($scorers as $scorer)
@@ -177,8 +177,8 @@ if (!empty($_POST) && (!empty($_POST['token']) && $_POST['token'] == SLACK_OUTGO
                 die($bot->sendMessageToChannel($message));
                 break;
             case "answers":
-                $message = "The top 3 players by number of questions answered are:\n";
-                $scorers = \Player::find('all',array("order"=>"questions_answered DESC", "limit"=>3));
+                $message = "The top players by number of questions answered are:\n";
+                $scorers = \Player::find('all',array("order"=>"questions_answered DESC", "limit"=>10));
                 if (!empty($scorers))
                 {
                     foreach ($scorers as $scorer)

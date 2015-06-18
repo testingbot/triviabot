@@ -58,6 +58,13 @@ if (!empty($_POST) && (!empty($_POST['token']) && $_POST['token'] == SLACK_OUTGO
                     die($bot->sendMessageToChannel($loaded));
                 }
                 break;
+            case "addquestion":
+                $parts = explode('|', $command[2]);
+                $question = $parts[0];
+                $answer = $parts[1];
+
+                die($bot->sendMessageToChannel("Thanks {$player_name}, the question has been saved!"));
+                break;
             case "start":
                 //start the bot
                 if (!$bot->started())
@@ -210,6 +217,7 @@ if (!empty($_POST) && (!empty($_POST['token']) && $_POST['token'] == SLACK_OUTGO
                 $helpText .= "*!trivia questions* - shows how many questions are loaded\n";
                 $helpText .= "*!trivia answers* - shows the top 3 players by questions answered\n";
                 $helpText .= "*!trivia me* - get details on your own scoring.\n";
+                $helpText .= "*!triva addquestion [question]|[answer]\n";
                 $helpText .= "*!trivia seen [player]* - says when the player last typed something in channel\n";
                 die($bot->sendMessageToChannel($helpText));
                 break;

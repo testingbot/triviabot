@@ -78,6 +78,22 @@ class TriviaBot
         return \Question::find('first',array('conditions' => 'current_hint > 0'));
     }
 
+    public function saveQuestion($question, $answer)
+    {
+        try
+        {
+            //duplicate questions won't be saved because of the unique property on the db column
+            \Question::create([
+                'question_set' => 1,
+                'question' => $question,
+                'answer' => serialize(array($answer))
+            ]);
+        } catch (\Exception $e)
+        {
+            //just skip this if it didn't add, might be a duplicate question field.
+        }
+    }
+
 
     /**
      * @param bool $question_file

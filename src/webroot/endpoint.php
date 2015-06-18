@@ -59,11 +59,12 @@ if (!empty($_POST) && (!empty($_POST['token']) && $_POST['token'] == SLACK_OUTGO
                 }
                 break;
             case "addquestion":
-                $parts = explode('|', $command[2]);
+                $parts = explode('|', str_replace("!trivia addquestion", "", $player_text));
+                $bot->sendMessageToChannel("Thanks {$player_name}, the question has been saved!");
                 $question = $parts[0];
                 $answer = $parts[1];
 
-                die($bot->sendMessageToChannel("Thanks {$player_name}, the question has been saved!"));
+                die();
                 break;
             case "start":
                 //start the bot
